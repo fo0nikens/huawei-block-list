@@ -1,0 +1,7 @@
+#
+# This file is created to be used with Algo VPN's adblock capability
+# See adblock.sh for more info:
+# 	https://github.com/trailofbits/algo/blob/master/roles/dns_adblocking/templates/adblock.sh.j2
+#
+
+127.0.0.1	.cn
