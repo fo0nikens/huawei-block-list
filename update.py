@@ -24,7 +24,11 @@ def locate_the_mainland(domains):
             # lines.append(domain)
             red_ticket = True
         else:
-            addr = socket.gethostbyname(domain)
+            try:
+                addr = socket.gethostbyname(domain)
+            except socket.gaierror:
+                print('[-] Failed to check {}'.format(domain))
+                continue
 
             if ipgeo_counter < ipgeo_limit:
                 if requests.get(ipgeo + addr).json()['country'] == 'China':
