@@ -13,15 +13,13 @@ def locate_the_mainland(domains):
     global red_ticket
     ipgeo = 'http://ip-api.com/json/'
     ipgeo_limit = 150
-    ipgeo_counter = 0
+    ipgeo_counter = 1
     ipgeo_timeout = 60
     lines = []
 
     for domain in domains:
         if len(domain) == 0:
             continue
-
-        print('[+] Checking {}'.format(domain))
 
         if domain.endswith('.cn'):
             # lines.append(domain)
@@ -30,15 +28,23 @@ def locate_the_mainland(domains):
             try:
                 addr = socket.gethostbyname(domain)
             except socket.gaierror:
-                print('[-] Failed to check {}'.format(domain))
+                print('[-][{}] Unable to resolve {}'.format(
+                    str(ipgeo_counter), domain))
                 continue
 
             if addr == '127.0.0.1':
                 continue
 
-            if requests.get(ipgeo + addr).json()['country'] == 'China':
-                lines.append(domain)
-                ipgeo_counter += 1
+            try:
+                r = requests.get(ipgeo + addr)
+                if r.json()['country'] == 'China':
+                    print('[+][{}] Succesfully get geolocation {}'.format(
+                        str(ipgeo_counter), domain))
+                    lines.append(domain)
+                    ipgeo_counter += 1
+            except:
+                print('[-][{}] Unable to get country {}'.format(
+                    str(ipgeo_counter), domain))
 
             if ipgeo_counter == ipgeo_limit:
                 print('[!] API limit exceeded. Sleep...')
