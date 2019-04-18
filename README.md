@@ -14,7 +14,7 @@ awk '{gsub(/"$/,"https://raw.githubusercontent.com/pe3zx/huawei-block-list/maste
 3. Execute `/usr/local/sbin/adblock.sh` to apply new block list to dnsmasq. The script will be automatically executed by cron to pull and apply any updates.
 
 ```sh
-sh /usr/local/sbin
+sh /usr/local/sbin/adblock.sh
 ```
 
 ## Setup with OpenDNS
