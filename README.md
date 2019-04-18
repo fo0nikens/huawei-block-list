@@ -21,4 +21,4 @@ sh /usr/local/sbin
 
 If you don't have your own server or don't want to mess with configuration stuff, you can get [a free OpenDNS account](https://www.opendns.com/home-internet-security/) which you can create up to 25 domains to block. However, OpenDNS doesn't support leading dot domain like `.cn`. I recommend to add each domain which has only ccTLD, and add something like `gov.cn` or `com.cn` to make you life easier.
 
-<div style="text-align:center"><img src ="img/opendns.png" /></div>
+<p align="center"><img src ="img/opendns.png" /></p>
