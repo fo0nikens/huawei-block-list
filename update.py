@@ -30,6 +30,9 @@ def locate_the_mainland(domains):
                 print('[-] Failed to check {}'.format(domain))
                 continue
 
+            if addr == '127.0.0.1':
+                continue
+
             if ipgeo_counter < ipgeo_limit:
                 if requests.get(ipgeo + addr).json()['country'] == 'China':
                     lines.append(domain)
