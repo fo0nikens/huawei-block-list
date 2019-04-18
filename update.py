@@ -11,7 +11,7 @@ red_ticket = False
 
 def locate_the_mainland(domains):
     global red_ticket
-    ipgeo = 'http://ip.api.com/json/'
+    ipgeo = 'http://ip-api.com/json/'
     ipgeo_limit = 150
     ipgeo_counter = 0
     ipgeo_timeout = 60
