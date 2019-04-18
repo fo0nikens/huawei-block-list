@@ -18,6 +18,9 @@ def locate_the_mainland(domains):
     lines = []
 
     for domain in domains:
+        if len(domain) == 0:
+            continue
+
         print('[+] Checking {}'.format(domain))
 
         if domain.endswith('.cn'):
