@@ -36,13 +36,13 @@ def locate_the_mainland(domains):
             if addr == '127.0.0.1':
                 continue
 
-            if ipgeo_counter < ipgeo_limit:
-                if requests.get(ipgeo + addr).json()['country'] == 'China':
-                    lines.append(domain)
-                    ipgeo_counter += 1
-            else:
-                ipgeo_counter = 0
+            if requests.get(ipgeo + addr).json()['country'] == 'China':
+                lines.append(domain)
+                ipgeo_counter += 1
+
+            if ipgeo_counter == ipgeo_limit:
                 print('[!] API limit exceeded. Sleep...')
+                ipgeo_counter = 0
                 time.sleep(ipgeo_timeout)
 
     return lines
