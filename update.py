@@ -2,56 +2,27 @@ import os
 import sys
 import gzip
 import tldextract
-import socket
-import requests
 import time
+import socket
+import ipwhois
 
-red_ticket = False
 
+def locate_the_mainland(domain):
+    if domain.endswith(".cn"):
+        return True
 
-def locate_the_mainland(domains):
-    global red_ticket
-    ipgeo = 'http://ip-api.com/json/'
-    ipgeo_limit = 150
-    ipgeo_counter = 1
-    ipgeo_timeout = 60
-    lines = []
+    try:
+        addr = socket.gethostbyname(domain.encode('utf-8'))
+    except socket.gaierror:
+        return None
 
-    for domain in domains:
-        if len(domain) == 0:
-            continue
-
-        if domain.endswith('.cn'):
-            # lines.append(domain)
-            red_ticket = True
-        else:
-            try:
-                addr = socket.gethostbyname(domain)
-            except socket.gaierror:
-                print('[-][{}] Unable to resolve {}'.format(
-                    str(ipgeo_counter), domain))
-                continue
-
-            if addr == '127.0.0.1':
-                continue
-
-            try:
-                r = requests.get(ipgeo + addr)
-                if r.json()['country'] == 'China':
-                    print('[+][{}] Succesfully get geolocation {}'.format(
-                        str(ipgeo_counter), domain))
-                    lines.append(domain)
-                    ipgeo_counter += 1
-            except:
-                print('[-][{}] Unable to get country {}'.format(
-                    str(ipgeo_counter), domain))
-
-            if ipgeo_counter == ipgeo_limit:
-                print('[!] API limit exceeded. Sleep...')
-                ipgeo_counter = 0
-                time.sleep(ipgeo_timeout)
-
-    return lines
+    try:
+        result = ipwhois.IPWhois(addr).lookup_rdap(depth=1)['asn_country_code']
+        return True if result == 'CN' else False
+    except ipwhois.exceptions.IPDefinedError:
+        return False
+    except ipwhois.exceptions.ASNRegistryError:
+        return False
 
 
 def line_analyzing(lines):
@@ -93,24 +64,18 @@ if __name__ == '__main__':
     if sys.argv[1] and os.path.exists(sys.argv[1]):
         lines = log_parsing(sys.argv[1])
         domains = line_analyzing(lines)
-        lines = locate_the_mainland(domains)
 
         with open('master.txt', 'w') as output:
-            output.write('''
-                    #
-                    # This file is created to be used with Algo VPN adblock
-                    # See adblock.sh for more info:
-                    #   https://github.com/trailofbits/algo/blob/master/roles/dns_adblocking/templates/adblock.sh.j2
-                    #
-                    ''')
+            output.write('''#
+# This file is created to be used with Algo VPN adblock
+# See adblock.sh for more info:
+#   https://github.com/trailofbits/algo/blob/master/roles/dns_adblocking/templates/adblock.sh.j2
+#\n''')
 
-            if red_ticket:
-                print('[+] Add wildcard .CN ccTLD to block list')
-                output.write('127.0.0.1\t.cn')
-
-            if len(lines) > 0:
-                for line in lines:
-                    print('[+] Add {} to block list'.format(line))
-                    output.write('127.0.0.1\t{}'.format(line))
-
+            for domain in domains:
+                if locate_the_mainland(domain):
+                    print("Positive: {}".format(domain))
+                    output.write("127.0.0.1\t{}\n".format(domain))
+                else:
+                    print("Negative: {}".format(domain))
 
