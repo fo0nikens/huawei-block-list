@@ -1,6 +1,6 @@
 # huawei-block-list
 
-<p align="center"><img src ="img/dnsmasq.png" /></p>
+<p align="center"><img src ="img/dnsmasq.jpg" /></p>
 
 Domain names on `master.txt` are captured DNS requests from Huawei P30 Pro, located in China and/or has an IP address within China's ASN. The device hasn't configured with Huawei services, including Huawei ID or any Hi services.
 
